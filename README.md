@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](/LICENSE)
 [![Twitter: kartben](https://img.shields.io/twitter/follow/kartben.svg?style=social)](https://twitter.com/kartben)
-[![CI](https://github.com/kartben/lorawan-node-simulator/workflows/ci/badge.svg)](https://github.com/kartben/lorawan-node-simulator/actions?query=workflow%3A%22ci)
+[![Build](https://github.com/kartben/lorawan-node-simulator/workflows/Node.js%20CI/badge.svg)](https://github.com/kartben/lorawan-node-simulator/actions?query=workflow%3ANode.js+CI")
 
 This repository contains a simulation infrastructure for LoRaWAN end nodes. As the initial purpose of this solution was to stress test a LoRaWAN network server, and not necessarily implement a full-blown simulator, only uplink traffic is generated at this point, and devices are expected to be provisioned via ABP.
 
