@@ -30,7 +30,7 @@ class EndNode extends events_1.EventEmitter {
     }
     start() {
         return __awaiter(this, void 0, void 0, function* () {
-            this._simTimer = setTimeout(() => { this._sendPacket(); }, getRandomArbitrary(0, 10000));
+            this._simTimer = setTimeout(() => { this._sendPacket(); }, getRandomArbitrary(0, 5000));
             this._simRunning = true;
         });
     }
@@ -45,12 +45,12 @@ class EndNode extends events_1.EventEmitter {
     _sendPacket() {
         this.emit('packet', this._generateLoRaPacket());
         if (this._simRunning) {
-            this._simTimer = setTimeout(() => { this._sendPacket(); }, getRandomArbitrary(20000, 25000));
+            this._simTimer = setTimeout(() => { this._sendPacket(); }, getRandomArbitrary(1000, 2000));
         }
     }
     _generateLoRaPacket() {
-        var packet = lora_packet_1.default.fromFields({
-            MType: "Unconfirmed Data Up",
+        let packet = lora_packet_1.default.fromFields({
+            MType: "Confirmed Data Up",
             DevAddr: this.devAddr,
             FCtrl: {
                 ADR: false,
@@ -66,3 +66,4 @@ class EndNode extends events_1.EventEmitter {
     }
 }
 exports.EndNode = EndNode;
+//# sourceMappingURL=end-node.js.map

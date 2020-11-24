@@ -2,15 +2,14 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import { EndNode } from './end-node';
+import { EndNodeOtaa } from './end-node-otaa';
 import { Gateway } from './gateway';
 
 const GATEWAY_START_EUID = parseInt(process.env.GATEWAY_START_EUID || '1')
-const GATEWAY_END_EUID = parseInt(process.env.GATEWAY_END_EUID || '5')
-const END_NODE_START_DEVADDR = parseInt(process.env.END_NODE_START_DEVADDR || '8000')
-const END_NODE_END_DEVADDR = parseInt(process.env.END_NODE_END_DEVADDR || '8100')
+const GATEWAY_END_EUID = parseInt(process.env.GATEWAY_END_EUID || '3')
+const END_NODE_START_DEVADDR = parseInt(process.env.END_NODE_START_DEVADDR || '8990')
+const END_NODE_END_DEVADDR = parseInt(process.env.END_NODE_END_DEVADDR || '8999')
 const NETWORK_SERVER_URI = process.env.NETWORK_SERVER_URI || 'udp://ttnv3-stack-whmrzhtjgy2lm.eastus.cloudapp.azure.com:1700'
-
-let gateways: Array<Gateway> = []
 
 /**
  * Returns `n` elements randomly picked from `arr`
@@ -32,6 +31,7 @@ function getNRandomGateways(arr: Array<Gateway>, n: number): Array<Gateway> {
 }
 
 // Initialize virtual gateways
+let gateways: Array<Gateway> = []
 for(let i = GATEWAY_START_EUID ; i <= GATEWAY_END_EUID ; i++) {
     let gatewayEUID = Buffer.allocUnsafe(8)
     gatewayEUID.writeBigInt64BE(BigInt(i))
@@ -48,8 +48,12 @@ for (let i = END_NODE_START_DEVADDR; i <= END_NODE_END_DEVADDR; i++) {
     let endNode = new EndNode(b, Buffer.from('4F58A13D1F44D307AFACD65A0A5DDF06', 'hex'), Buffer.from('4F58A13D1F44D307AFACD65A0A5DDF06', 'hex'))
     endNode.on('packet', (packet) => {
         // randomly pick a few gateways and have them send the uplink packet
-        getNRandomGateways(gateways, 3).forEach((g) => g.enqueueUplink(packet))
+        getNRandomGateways(gateways, 1).forEach((g) => g.enqueueUplink(packet))
     })
 
     endNode.start()
 }
+
+// let otaaDevice = new EndNodeOtaa(Buffer.from('1234567895464564', 'hex'), Buffer.from('0000000000000000', 'hex'))
+// console.log(otaaDevice.getJoinRequestPacket())
+// gateways[0].enqueueUplink(otaaDevice.getJoinRequestPacket())

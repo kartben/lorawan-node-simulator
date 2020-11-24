@@ -1,5 +1,5 @@
 declare module 'packet-forwarder' {
-    export default class PacketForwarder {
+    export default class PacketForwarder extends EventEmitter {
             /**
              *
              * @param {string} gatewayEui Gateway EUI used to deliver uplink message
@@ -21,5 +21,5 @@ declare module 'packet-forwarder' {
             close(): Promise<void>;
         }
         import dgram = require("dgram");
-    
-};
+        import { EventEmitter } from "events";
+    };
