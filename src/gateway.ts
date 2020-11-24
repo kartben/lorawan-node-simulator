@@ -11,10 +11,11 @@ class Gateway {
     private _packetForwarder: PacketForwarder
     
     constructor(gatewayEUID: GatewayEUID, networkServer: URL) {
+        console.log(networkServer)
         this.gatewayEUID = gatewayEUID
         this.networkServer = networkServer
         
-        this._packetForwarder = new PacketForwarder({ gateway: gatewayEUID.toString('hex'), target: 'ttnv3-stack-whmrzhtjgy2lm.eastus.cloudapp.azure.com', port: 1700 })
+        this._packetForwarder = new PacketForwarder({ gateway: gatewayEUID.toString('hex'), target: this.networkServer.hostname, port: parseInt(this.networkServer.port) })
     }
     
     async enqueueUplink(packet: LoraPacket) {
@@ -41,7 +42,7 @@ class Gateway {
                     data: data
                 }]
             }
-            console.log("Sending packet");
+            console.log(`Gateway #${this.gatewayEUID.readBigUInt64BE()} is sending packet #${packet.getFCnt()} from device ${packet.DevAddr?.readInt32BE()}`);
             await this._packetForwarder.sendUplink(message);
         }
     }

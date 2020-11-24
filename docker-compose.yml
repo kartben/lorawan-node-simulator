@@ -1,0 +1,36 @@
+version: '3.4'
+
+services:
+  lorawannodesimulator_1:
+    image: lorawannodesimulator
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: production
+      GATEWAY_START_EUID: 1
+      GATEWAY_END_EUID: 5
+      END_NODE_START_DEVADDR: 8000
+      END_NODE_END_DEVADDR: 8010
+  lorawannodesimulator_2:
+    image: lorawannodesimulator
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: production
+      GATEWAY_START_EUID: 1
+      GATEWAY_END_EUID: 5
+      END_NODE_START_DEVADDR: 8101
+      END_NODE_END_DEVADDR: 8110
+  lorawannodesimulator_3:
+    image: lorawannodesimulator
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: production
+      GATEWAY_START_EUID: 1
+      GATEWAY_END_EUID: 5
+      END_NODE_START_DEVADDR: 8400
+      END_NODE_END_DEVADDR: 8430

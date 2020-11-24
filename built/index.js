@@ -1,81 +1,49 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const packet_forwarder_1 = __importDefault(require("packet-forwarder"));
-const lora_packet_1 = __importDefault(require("lora-packet"));
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
+const end_node_1 = require("./end-node");
+const gateway_1 = require("./gateway");
+const GATEWAY_START_EUID = parseInt(process.env.GATEWAY_START_EUID || '1');
+const GATEWAY_END_EUID = parseInt(process.env.GATEWAY_END_EUID || '5');
+const END_NODE_START_DEVADDR = parseInt(process.env.END_NODE_START_DEVADDR || '8000');
+const END_NODE_END_DEVADDR = parseInt(process.env.END_NODE_END_DEVADDR || '8100');
+const NETWORK_SERVER_URI = process.env.NETWORK_SERVER_URI || 'udp://ttnv3-stack-whmrzhtjgy2lm.eastus.cloudapp.azure.com:1700';
+let gateways = [];
 /**
- * Returns a random number between min (inclusive) and max (exclusive)
+ * Returns `n` elements randomly picked from `arr`
+ * @param arr array to pick from
+ * @param n number of elements to randomly pick from the array
  */
-function getRandomArbitrary(min, max) {
-    return Math.random() * (max - min) + min;
+function getNRandomGateways(arr, n) {
+    var result = new Array(n), len = arr.length, taken = new Array(len);
+    if (n > len)
+        throw new RangeError("getRandom: more elements taken than available");
+    while (n--) {
+        var x = Math.floor(Math.random() * len);
+        result[n] = arr[x in taken ? taken[x] : x];
+        taken[x] = --len in taken ? taken[len] : len;
+    }
+    return result;
 }
-var fCnt = {};
-var generatePacket = (devAddr) => {
-    fCnt[devAddr] = fCnt[devAddr] || 0;
-    var devAddrBuffer = Buffer.allocUnsafe(4);
-    devAddrBuffer.writeUInt32BE(devAddr);
-    var packet = lora_packet_1.default.fromFields({
-        MType: "Confirmed Data Up",
-        DevAddr: devAddrBuffer,
-        FCtrl: {
-            ADR: false,
-            ACK: false,
-            ADRACKReq: false,
-            FPending: false,
-        },
-        FPort: 1,
-        FCnt: fCnt[devAddr]++,
-        payload: "test",
-    }, Buffer.from("4F58A13D1F44D307AFACD65A0A5DDF06", "hex"), // AppSKey
-    Buffer.from("4F58A13D1F44D307AFACD65A0A5DDF06", "hex") // NwkSKey
-    );
-    return packet;
-};
-function sendFakeUplink(devAddr) {
-    return __awaiter(this, void 0, void 0, function* () {
-        let phyPayload = generatePacket(devAddr).getPHYPayload();
-        if (phyPayload) {
-            let data = phyPayload.toString('base64');
-            const gateway = '4546456456456456';
-            const target = 'ttnv3-stack-whmrzhtjgy2lm.eastus.cloudapp.azure.com';
-            const port = 1700;
-            const packetForwarder = new packet_forwarder_1.default({ gateway, target, port });
-            const message = {
-                rxpk: [{
-                        time: new Date().toISOString(),
-                        tmms: null,
-                        tmst: (new Date().getTime() / 1000 | 0),
-                        freq: 868.3,
-                        chan: null,
-                        rfch: 0,
-                        stat: 0,
-                        modu: 'LORA',
-                        datr: 'SF11BW125',
-                        codr: '4/5',
-                        rssi: -102,
-                        lsnr: 7.8,
-                        size: 16,
-                        data: data
-                    }]
-            };
-            console.log("Sending packet #%d for Device #%d", fCnt[devAddr], devAddr);
-            yield packetForwarder.sendUplink(message);
-            yield packetForwarder.close();
-            setTimeout(() => { sendFakeUplink(devAddr); }, getRandomArbitrary(8000, 14000));
-        }
+// Initialize virtual gateways
+for (let i = GATEWAY_START_EUID; i <= GATEWAY_END_EUID; i++) {
+    let gatewayEUID = Buffer.allocUnsafe(8);
+    gatewayEUID.writeBigInt64BE(BigInt(i));
+    let gateway = new gateway_1.Gateway(gatewayEUID, new URL(NETWORK_SERVER_URI));
+    gateways.push(gateway);
+}
+// Initialize virtual nodes and start their simulation process
+for (let i = END_NODE_START_DEVADDR; i <= END_NODE_END_DEVADDR; i++) {
+    let b = Buffer.allocUnsafe(4);
+    b.writeUInt32BE(i);
+    let endNode = new end_node_1.EndNode(b, Buffer.from('4F58A13D1F44D307AFACD65A0A5DDF06', 'hex'), Buffer.from('4F58A13D1F44D307AFACD65A0A5DDF06', 'hex'));
+    endNode.on('packet', (packet) => {
+        // randomly pick a few gateways and have them send the uplink packet
+        getNRandomGateways(gateways, 3).forEach((g) => g.enqueueUplink(packet));
     });
-}
-for (let i = 1225; i < 5000; i++) {
-    setTimeout(() => { sendFakeUplink(i); }, getRandomArbitrary(0, 30000));
+    endNode.start();
 }
