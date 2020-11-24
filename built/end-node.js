@@ -15,13 +15,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.EndNode = void 0;
 const events_1 = require("events");
 const lora_packet_1 = __importDefault(require("lora-packet"));
-function getRandomArbitrary(min, max) {
-    return Math.random() * (max - min) + min;
-}
+const random_1 = __importDefault(require("random"));
 class EndNode extends events_1.EventEmitter {
     constructor(devAddr, nwkKey, appKey) {
         super();
-        this.frameCnt = 0;
+        this.frameCnt = 44;
         this._simRunning = false;
         this._simTimer = null;
         this.devAddr = devAddr;
@@ -30,7 +28,7 @@ class EndNode extends events_1.EventEmitter {
     }
     start() {
         return __awaiter(this, void 0, void 0, function* () {
-            this._simTimer = setTimeout(() => { this._sendPacket(); }, getRandomArbitrary(0, 5000));
+            this._simTimer = setTimeout(() => { this._sendPacket(); }, random_1.default.int(5000));
             this._simRunning = true;
         });
     }
@@ -45,7 +43,7 @@ class EndNode extends events_1.EventEmitter {
     _sendPacket() {
         this.emit('packet', this._generateLoRaPacket());
         if (this._simRunning) {
-            this._simTimer = setTimeout(() => { this._sendPacket(); }, getRandomArbitrary(1000, 2000));
+            this._simTimer = setTimeout(() => { this._sendPacket(); }, random_1.default.int(5000, 10000)); // communicate every 10 to 20 seconds
         }
     }
     _generateLoRaPacket() {

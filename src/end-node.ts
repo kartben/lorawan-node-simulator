@@ -1,21 +1,19 @@
 import { EventEmitter } from "events"
 import lora_packet from 'lora-packet'
 import LoraPacket from "lora-packet/out/lib/LoraPacket"
+import random from 'random';
+
 
 type DevAddr = Buffer
 type NwkKey = Buffer
 type AppKey = Buffer
-
-function getRandomArbitrary(min: number, max: number): number {
-    return Math.random() * (max - min) + min;
-}
 
 class EndNode extends EventEmitter {
     devAddr: DevAddr
 
     private _nwkKey: NwkKey
     private _appKey: AppKey
-    private frameCnt: number = 0
+    private frameCnt: number = 44
 
     private _simRunning: Boolean = false
     private _simTimer: NodeJS.Timeout | null = null
@@ -28,7 +26,7 @@ class EndNode extends EventEmitter {
     }
 
     async start() {
-        this._simTimer = setTimeout(() => { this._sendPacket() }, getRandomArbitrary(0, 5000));
+        this._simTimer = setTimeout(() => { this._sendPacket() }, random.int(5000));
         this._simRunning = true
     }
 
@@ -42,7 +40,7 @@ class EndNode extends EventEmitter {
     private _sendPacket() {
         this.emit('packet', this._generateLoRaPacket())
         if (this._simRunning) {
-            this._simTimer = setTimeout(() => { this._sendPacket() }, getRandomArbitrary(1000, 2000));
+            this._simTimer = setTimeout(() => { this._sendPacket() }, random.int(10000, 20000)); // communicate every 10 to 20 seconds
         }
     }
 

@@ -5,13 +5,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
+const random_1 = __importDefault(require("random"));
 const end_node_1 = require("./end-node");
-const end_node_otaa_1 = require("./end-node-otaa");
 const gateway_1 = require("./gateway");
 const GATEWAY_START_EUID = parseInt(process.env.GATEWAY_START_EUID || '1');
-const GATEWAY_END_EUID = parseInt(process.env.GATEWAY_END_EUID || '3');
-const END_NODE_START_DEVADDR = parseInt(process.env.END_NODE_START_DEVADDR || '8990');
-const END_NODE_END_DEVADDR = parseInt(process.env.END_NODE_END_DEVADDR || '8999');
+const GATEWAY_END_EUID = parseInt(process.env.GATEWAY_END_EUID || '5');
+const END_NODE_START_DEVADDR = parseInt(process.env.END_NODE_START_DEVADDR || '1000');
+const END_NODE_END_DEVADDR = parseInt(process.env.END_NODE_END_DEVADDR || '1500');
 const NETWORK_SERVER_URI = process.env.NETWORK_SERVER_URI || 'udp://ttnv3-stack-whmrzhtjgy2lm.eastus.cloudapp.azure.com:1700';
 /**
  * Returns `n` elements randomly picked from `arr`
@@ -41,14 +41,14 @@ for (let i = GATEWAY_START_EUID; i <= GATEWAY_END_EUID; i++) {
 for (let i = END_NODE_START_DEVADDR; i <= END_NODE_END_DEVADDR; i++) {
     let b = Buffer.allocUnsafe(4);
     b.writeUInt32BE(i);
-    let endNode = new end_node_1.EndNode(b, Buffer.from('4F58A13D1F44D307AFACD65A0A5DDF06', 'hex'), Buffer.from('4F58A13D1F44D307AFACD65A0A5DDF06', 'hex'));
+    let endNode = new end_node_1.EndNode(b, Buffer.from('4F58A13D1F44D307AFACD65A0A5DDF07', 'hex'), Buffer.from('4F58A13D1F44D307AFACD65A0A5DDF07', 'hex'));
     endNode.on('packet', (packet) => {
-        // randomly pick a few gateways and have them send the uplink packet
-        getNRandomGateways(gateways, 1).forEach((g) => g.enqueueUplink(packet));
+        // randomly pick a few gateways (between 1 and 3) and have them send the uplink packet
+        getNRandomGateways(gateways, random_1.default.int(1, 3)).forEach((g) => g.enqueueUplink(packet));
     });
-    // endNode.start()
+    endNode.start();
 }
-let otaaDevice = new end_node_otaa_1.EndNodeOtaa(Buffer.from('1234567895464564', 'hex'), Buffer.from('0000000000000000', 'hex'));
-console.log(otaaDevice.getJoinRequestPacket());
-gateways[0].enqueueUplink(otaaDevice.getJoinRequestPacket());
+// let otaaDevice = new EndNodeOtaa(Buffer.from('1234567895464564', 'hex'), Buffer.from('0000000000000000', 'hex'))
+// console.log(otaaDevice.getJoinRequestPacket())
+// gateways[0].enqueueUplink(otaaDevice.getJoinRequestPacket())
 //# sourceMappingURL=index.js.map

@@ -31,7 +31,7 @@ class Gateway {
         this._lsnrRandomGenerator = random.normal(3, 10)
 
         this._packetForwarder = new PacketForwarder({ gateway: gatewayEUID.toString('hex'), target: this.networkServer.hostname, port: parseInt(this.networkServer.port) })
-        this._packetForwarder.on('message', (msg) => { console.log(msg.toString('hex'))} ) 
+        //this._packetForwarder.on('message', (msg) => { console.log(msg.toString('hex'))} ) 
     }
 
     async enqueueUplink(packet: LoraPacket) {
