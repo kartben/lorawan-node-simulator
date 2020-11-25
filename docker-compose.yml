@@ -8,8 +8,8 @@ services:
       dockerfile: ./Dockerfile
     environment:
       NODE_ENV: production
-      GATEWAY_START_EUID: 1
-      GATEWAY_END_EUID: 5
+      GATEWAY_START_EUI: 1
+      GATEWAY_END_EUI: 5
       END_NODE_START_DEVADDR: 8000
       END_NODE_END_DEVADDR: 8010
   lorawannodesimulator_2:
@@ -19,7 +19,7 @@ services:
       dockerfile: ./Dockerfile
     environment:
       NODE_ENV: production
-      GATEWAY_START_EUID: 1
+      GATEWAY_START_EUI: 1
       GATEWAY_END_EUID: 5
       END_NODE_START_DEVADDR: 8101
       END_NODE_END_DEVADDR: 8110
@@ -30,7 +30,7 @@ services:
       dockerfile: ./Dockerfile
     environment:
       NODE_ENV: production
-      GATEWAY_START_EUID: 1
-      GATEWAY_END_EUID: 5
+      GATEWAY_START_EUI: 1
+      GATEWAY_END_EUI: 5
       END_NODE_START_DEVADDR: 8400
       END_NODE_END_DEVADDR: 8430

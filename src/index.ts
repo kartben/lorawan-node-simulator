@@ -1,5 +1,6 @@
 import { randomInt } from 'crypto';
 import dotenv from 'dotenv';
+import { exit } from 'process';
 dotenv.config();
 
 import random from 'random';
@@ -8,11 +9,21 @@ import { EndNode } from './end-node';
 import { EndNodeOtaa } from './end-node-otaa';
 import { Gateway } from './gateway';
 
-const GATEWAY_START_EUID = parseInt(process.env.GATEWAY_START_EUID || '1')
-const GATEWAY_END_EUID = parseInt(process.env.GATEWAY_END_EUID || '5')
-const END_NODE_START_DEVADDR = parseInt(process.env.END_NODE_START_DEVADDR || '1000')
-const END_NODE_END_DEVADDR = parseInt(process.env.END_NODE_END_DEVADDR || '1500')
-const NETWORK_SERVER_URI = process.env.NETWORK_SERVER_URI || 'udp://ttnv3-stack-whmrzhtjgy2lm.eastus.cloudapp.azure.com:1700'
+const NETWORK_SERVER_URI = process.env.NETWORK_SERVER_URI
+const NETWORK_SESSION_KEY = process.env.NETWORK_SESSION_KEY
+const APPLICATION_SESSION_KEY = process.env.APPLICATION_SESSION_KEY
+
+if (NETWORK_SERVER_URI === undefined || NETWORK_SESSION_KEY === undefined || APPLICATION_SESSION_KEY === undefined) {
+    console.log('ERROR: Make sure to set the NETWORK_SERVER_URI, NETWORK_SESSION_KEY, APPLICATION_SESSION_KEY prior to launching the simulation.')
+    exit(1)
+}
+
+const GATEWAY_START_EUI = parseInt(process.env.GATEWAY_START_EUI || '1')
+const GATEWAY_END_EUI = parseInt(process.env.GATEWAY_END_EUI || '5')
+
+const END_NODE_START_DEVADDR = parseInt(process.env.END_NODE_START_DEVADDR || '1')
+const END_NODE_END_DEVADDR = parseInt(process.env.END_NODE_END_DEVADDR || '1000')
+const END_NODE_TX_PERIOD = parseInt(process.env.END_NODE_TX_PERIOD || '30000')
 
 /**
  * Returns `n` elements randomly picked from `arr`
@@ -35,11 +46,11 @@ function getNRandomGateways(arr: Array<Gateway>, n: number): Array<Gateway> {
 
 // Initialize virtual gateways
 let gateways: Array<Gateway> = []
-for(let i = GATEWAY_START_EUID ; i <= GATEWAY_END_EUID ; i++) {
-    let gatewayEUID = Buffer.allocUnsafe(8)
-    gatewayEUID.writeBigInt64BE(BigInt(i))
+for (let i = GATEWAY_START_EUI; i <= GATEWAY_END_EUI; i++) {
+    let gatewayEUI = Buffer.allocUnsafe(8)
+    gatewayEUI.writeBigInt64BE(BigInt(i))
 
-    let gateway = new Gateway(gatewayEUID, new URL(NETWORK_SERVER_URI))
+    let gateway = new Gateway(gatewayEUI, new URL(NETWORK_SERVER_URI))
     gateways.push(gateway)
 }
 
@@ -48,10 +59,10 @@ for (let i = END_NODE_START_DEVADDR; i <= END_NODE_END_DEVADDR; i++) {
     let b = Buffer.allocUnsafe(4)
     b.writeUInt32BE(i)
 
-    let endNode = new EndNode(b, Buffer.from('4F58A13D1F44D307AFACD65A0A5DDF07', 'hex'), Buffer.from('4F58A13D1F44D307AFACD65A0A5DDF07', 'hex'))
+    let endNode = new EndNode(b, Buffer.from(NETWORK_SESSION_KEY, 'hex'), Buffer.from(APPLICATION_SESSION_KEY, 'hex'), { txPeriod: END_NODE_TX_PERIOD })
     endNode.on('packet', (packet) => {
         // randomly pick a few gateways (between 1 and 3) and have them send the uplink packet
-        getNRandomGateways(gateways, random.int(1,3)).forEach((g) => g.enqueueUplink(packet))
+        getNRandomGateways(gateways, random.int(1, 3)).forEach((g) => g.enqueueUplink(packet))
     })
 
     endNode.start()

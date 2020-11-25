@@ -22,5 +22,9 @@
     "test": "echo \"No test specified\" && exit 0"
   },
   "author": "Benjamin Cabé",
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/kartben/lorawan-node-simulator"
+  }
 }

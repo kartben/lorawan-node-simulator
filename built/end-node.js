@@ -17,18 +17,22 @@ const events_1 = require("events");
 const lora_packet_1 = __importDefault(require("lora-packet"));
 const random_1 = __importDefault(require("random"));
 class EndNode extends events_1.EventEmitter {
-    constructor(devAddr, nwkKey, appKey) {
+    constructor(devAddr, nwkKey, appKey, options = {
+        txPeriod: 10000
+    }) {
         super();
-        this.frameCnt = 44;
+        this._frameCnt = 0;
         this._simRunning = false;
         this._simTimer = null;
         this.devAddr = devAddr;
         this._nwkKey = nwkKey;
         this._appKey = appKey;
+        this._options = options;
+        this._randomTransmitPeriodGenerator = random_1.default.normal(this._options.txPeriod, this._options.txPeriod * .2);
     }
     start() {
         return __awaiter(this, void 0, void 0, function* () {
-            this._simTimer = setTimeout(() => { this._sendPacket(); }, random_1.default.int(5000));
+            this._simTimer = setTimeout(() => { this._sendPacket(); }, random_1.default.int(this._options.txPeriod)); // emit first packet after at a random time between now and now+transmitPeriod ms
             this._simRunning = true;
         });
     }
@@ -43,12 +47,13 @@ class EndNode extends events_1.EventEmitter {
     _sendPacket() {
         this.emit('packet', this._generateLoRaPacket());
         if (this._simRunning) {
-            this._simTimer = setTimeout(() => { this._sendPacket(); }, random_1.default.int(5000, 10000)); // communicate every 10 to 20 seconds
+            let transmitDelay = Math.min(Math.max(0, this._randomTransmitPeriodGenerator()), this._options.txPeriod * 2);
+            this._simTimer = setTimeout(() => { this._sendPacket(); }, transmitDelay);
         }
     }
     _generateLoRaPacket() {
         let packet = lora_packet_1.default.fromFields({
-            MType: "Confirmed Data Up",
+            MType: "Unconfirmed Data Up",
             DevAddr: this.devAddr,
             FCtrl: {
                 ADR: false,
@@ -57,7 +62,7 @@ class EndNode extends events_1.EventEmitter {
                 FPending: false,
             },
             FPort: 1,
-            FCnt: this.frameCnt++,
+            FCnt: this._frameCnt++,
             payload: "test"
         }, this._appKey, this._nwkKey);
         return packet;

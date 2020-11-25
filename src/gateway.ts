@@ -2,19 +2,22 @@ import LoraPacket from 'lora-packet/out/lib/LoraPacket';
 import PacketForwarder from 'packet-forwarder';
 import random from 'random';
 
-type GatewayEUID = Buffer
+type GatewayEUI = Buffer
 
-const EU_868_TTN_UPLINK_CHANNELS = [868.1, 868.3, 868.5, 867.1, 867.3, 867.5, 867.7, 867.9]
-const EU_868_TTN_DATARATES = ['SF12BW125', 'SF11BW125', 'SF10BW125', 'SF9BW125', 'SF811BW125', 'SF7BW125']
+const EU_868_UPLINK_CHANNELS = [868.1, 868.3, 868.5]
+const EU_868_DATARATES = ['SF12BW125', 'SF11BW125', 'SF10BW125', 'SF9BW125', 'SF811BW125', 'SF7BW125']
 
-const ALLOWED_UPLINK_CHANNELS = EU_868_TTN_UPLINK_CHANNELS
-const ALLOWED_DATARATES = EU_868_TTN_DATARATES
+const EU_868_TTN_UPLINK_CHANNELS = EU_868_UPLINK_CHANNELS.concat([867.1, 867.3, 867.5, 867.7, 867.9])
+const EU_868_TTN_DATARATES = EU_868_DATARATES
+
+const ALLOWED_UPLINK_CHANNELS = EU_868_UPLINK_CHANNELS
+const ALLOWED_DATARATES = EU_868_DATARATES
 
 type RandomGenFunction = () => number;
 
 
 class Gateway {
-    gatewayEUID: GatewayEUID
+    gatewayEUI: GatewayEUI
     networkServer: URL
 
     private _packetForwarder: PacketForwarder
@@ -22,15 +25,15 @@ class Gateway {
     private _rssiRandomGenerator: RandomGenFunction
     private _lsnrRandomGenerator: RandomGenFunction
 
-    constructor(gatewayEUID: GatewayEUID, networkServer: URL) {
-        this.gatewayEUID = gatewayEUID
+    constructor(gatewayEUI: GatewayEUI, networkServer: URL) {
+        this.gatewayEUI = gatewayEUI
         this.networkServer = networkServer
 
         let pareto = random.pareto(.25)
         this._rssiRandomGenerator = () => { return -30 - (1 / pareto() * 90) }
         this._lsnrRandomGenerator = random.normal(3, 10)
 
-        this._packetForwarder = new PacketForwarder({ gateway: gatewayEUID.toString('hex'), target: this.networkServer.hostname, port: parseInt(this.networkServer.port) })
+        this._packetForwarder = new PacketForwarder({ gateway: gatewayEUI.toString('hex'), target: this.networkServer.hostname, port: parseInt(this.networkServer.port) })
         //this._packetForwarder.on('message', (msg) => { console.log(msg.toString('hex'))} ) 
     }
 
@@ -58,7 +61,7 @@ class Gateway {
                     data: data
                 }]
             }
-            console.log(`Gateway #${this.gatewayEUID.readBigUInt64BE()} is sending packet #${packet.getFCnt()} from device ${packet.DevAddr?.readInt32BE()}`);
+            console.log(`Gateway #${this.gatewayEUI.toString('hex')} is sending packet #${packet.getFCnt()} from device ${packet.DevAddr?.toString('hex')}`);
             await this._packetForwarder.sendUplink(message);
         }
     }

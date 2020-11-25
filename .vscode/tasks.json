@@ -8,7 +8,8 @@
 			"dockerBuild": {
 				"dockerfile": "${workspaceFolder}/Dockerfile",
 				"context": "${workspaceFolder}",
-				"pull": true
+				"pull": true,
+				"tag": "kartben/lorawan-node-simulator"
 			}
 		},
 		{

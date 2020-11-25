@@ -8,25 +8,36 @@ type DevAddr = Buffer
 type NwkKey = Buffer
 type AppKey = Buffer
 
+interface EndNodeOptions {
+    txPeriod: number;
+}
+
 class EndNode extends EventEmitter {
     devAddr: DevAddr
 
     private _nwkKey: NwkKey
     private _appKey: AppKey
-    private frameCnt: number = 44
+    private _options: EndNodeOptions
+    private _frameCnt: number = 0
 
     private _simRunning: Boolean = false
     private _simTimer: NodeJS.Timeout | null = null
+    private _randomTransmitPeriodGenerator: () => number;
 
-    constructor(devAddr: DevAddr, nwkKey: NwkKey, appKey: AppKey) {
+    constructor(devAddr: DevAddr, nwkKey: NwkKey, appKey: AppKey, options: EndNodeOptions = {
+        txPeriod: 10000
+    }) {
         super()
         this.devAddr = devAddr
         this._nwkKey = nwkKey
         this._appKey = appKey
+        this._options = options
+
+        this._randomTransmitPeriodGenerator = random.normal(this._options.txPeriod, this._options.txPeriod * .2);
     }
 
     async start() {
-        this._simTimer = setTimeout(() => { this._sendPacket() }, random.int(5000));
+        this._simTimer = setTimeout(() => { this._sendPacket() }, random.int(this._options.txPeriod)); // emit first packet after at a random time between now and now+transmitPeriod ms
         this._simRunning = true
     }
 
@@ -40,14 +51,15 @@ class EndNode extends EventEmitter {
     private _sendPacket() {
         this.emit('packet', this._generateLoRaPacket())
         if (this._simRunning) {
-            this._simTimer = setTimeout(() => { this._sendPacket() }, random.int(10000, 20000)); // communicate every 10 to 20 seconds
+            let transmitDelay = Math.min(Math.max(0, this._randomTransmitPeriodGenerator()), this._options.txPeriod * 2)
+            this._simTimer = setTimeout(() => { this._sendPacket() }, transmitDelay);
         }
     }
 
     private _generateLoRaPacket(): LoraPacket {
         let packet = lora_packet.fromFields(
             {
-                MType: "Confirmed Data Up", // (default)
+                MType: "Unconfirmed Data Up", // (default)
                 DevAddr: this.devAddr,
                 FCtrl: {
                     ADR: false,
@@ -56,7 +68,7 @@ class EndNode extends EventEmitter {
                     FPending: false,
                 },
                 FPort: 1,
-                FCnt: this.frameCnt++,
+                FCnt: this._frameCnt++,
                 payload: "test"
             },
             this._appKey,

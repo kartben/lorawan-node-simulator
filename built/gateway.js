@@ -15,18 +15,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Gateway = void 0;
 const packet_forwarder_1 = __importDefault(require("packet-forwarder"));
 const random_1 = __importDefault(require("random"));
-const EU_868_TTN_UPLINK_CHANNELS = [868.1, 868.3, 868.5, 867.1, 867.3, 867.5, 867.7, 867.9];
-const EU_868_TTN_DATARATES = ['SF12BW125', 'SF11BW125', 'SF10BW125', 'SF9BW125', 'SF811BW125', 'SF7BW125'];
-const ALLOWED_UPLINK_CHANNELS = EU_868_TTN_UPLINK_CHANNELS;
-const ALLOWED_DATARATES = EU_868_TTN_DATARATES;
+const EU_868_UPLINK_CHANNELS = [868.1, 868.3, 868.5];
+const EU_868_DATARATES = ['SF12BW125', 'SF11BW125', 'SF10BW125', 'SF9BW125', 'SF811BW125', 'SF7BW125'];
+const EU_868_TTN_UPLINK_CHANNELS = EU_868_UPLINK_CHANNELS.concat([867.1, 867.3, 867.5, 867.7, 867.9]);
+const EU_868_TTN_DATARATES = EU_868_DATARATES;
+const ALLOWED_UPLINK_CHANNELS = EU_868_UPLINK_CHANNELS;
+const ALLOWED_DATARATES = EU_868_DATARATES;
 class Gateway {
-    constructor(gatewayEUID, networkServer) {
-        this.gatewayEUID = gatewayEUID;
+    constructor(gatewayEUI, networkServer) {
+        this.gatewayEUI = gatewayEUI;
         this.networkServer = networkServer;
         let pareto = random_1.default.pareto(.25);
         this._rssiRandomGenerator = () => { return -30 - (1 / pareto() * 90); };
         this._lsnrRandomGenerator = random_1.default.normal(3, 10);
-        this._packetForwarder = new packet_forwarder_1.default({ gateway: gatewayEUID.toString('hex'), target: this.networkServer.hostname, port: parseInt(this.networkServer.port) });
+        this._packetForwarder = new packet_forwarder_1.default({ gateway: gatewayEUI.toString('hex'), target: this.networkServer.hostname, port: parseInt(this.networkServer.port) });
         //this._packetForwarder.on('message', (msg) => { console.log(msg.toString('hex'))} ) 
     }
     enqueueUplink(packet) {
@@ -53,7 +55,7 @@ class Gateway {
                             data: data
                         }]
                 };
-                console.log(`Gateway #${this.gatewayEUID.readBigUInt64BE()} is sending packet #${packet.getFCnt()} from device ${(_a = packet.DevAddr) === null || _a === void 0 ? void 0 : _a.readInt32BE()}`);
+                console.log(`Gateway #${this.gatewayEUI.toString('hex')} is sending packet #${packet.getFCnt()} from device ${(_a = packet.DevAddr) === null || _a === void 0 ? void 0 : _a.toString('hex')}`);
                 yield this._packetForwarder.sendUplink(message);
             }
         });

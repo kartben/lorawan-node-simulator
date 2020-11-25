@@ -4,15 +4,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const dotenv_1 = __importDefault(require("dotenv"));
+const process_1 = require("process");
 dotenv_1.default.config();
 const random_1 = __importDefault(require("random"));
 const end_node_1 = require("./end-node");
 const gateway_1 = require("./gateway");
-const GATEWAY_START_EUID = parseInt(process.env.GATEWAY_START_EUID || '1');
-const GATEWAY_END_EUID = parseInt(process.env.GATEWAY_END_EUID || '5');
-const END_NODE_START_DEVADDR = parseInt(process.env.END_NODE_START_DEVADDR || '1000');
-const END_NODE_END_DEVADDR = parseInt(process.env.END_NODE_END_DEVADDR || '1500');
-const NETWORK_SERVER_URI = process.env.NETWORK_SERVER_URI || 'udp://ttnv3-stack-whmrzhtjgy2lm.eastus.cloudapp.azure.com:1700';
+const NETWORK_SERVER_URI = process.env.NETWORK_SERVER_URI;
+const NETWORK_SESSION_KEY = process.env.NETWORK_SESSION_KEY;
+const APPLICATION_SESSION_KEY = process.env.APPLICATION_SESSION_KEY;
+if (NETWORK_SERVER_URI === undefined || NETWORK_SESSION_KEY === undefined || APPLICATION_SESSION_KEY === undefined) {
+    console.log('ERROR: Make sure to set the NETWORK_SERVER_URI, NETWORK_SESSION_KEY, APPLICATION_SESSION_KEY prior to launching the simulation.');
+    process_1.exit(1);
+}
+const GATEWAY_START_EUI = parseInt(process.env.GATEWAY_START_EUI || '1');
+const GATEWAY_END_EUI = parseInt(process.env.GATEWAY_END_EUI || '5');
+const END_NODE_START_DEVADDR = parseInt(process.env.END_NODE_START_DEVADDR || '1');
+const END_NODE_END_DEVADDR = parseInt(process.env.END_NODE_END_DEVADDR || '1000');
+const END_NODE_TX_PERIOD = parseInt(process.env.END_NODE_TX_PERIOD || '30000');
 /**
  * Returns `n` elements randomly picked from `arr`
  * @param arr array to pick from
@@ -31,17 +39,17 @@ function getNRandomGateways(arr, n) {
 }
 // Initialize virtual gateways
 let gateways = [];
-for (let i = GATEWAY_START_EUID; i <= GATEWAY_END_EUID; i++) {
-    let gatewayEUID = Buffer.allocUnsafe(8);
-    gatewayEUID.writeBigInt64BE(BigInt(i));
-    let gateway = new gateway_1.Gateway(gatewayEUID, new URL(NETWORK_SERVER_URI));
+for (let i = GATEWAY_START_EUI; i <= GATEWAY_END_EUI; i++) {
+    let gatewayEUI = Buffer.allocUnsafe(8);
+    gatewayEUI.writeBigInt64BE(BigInt(i));
+    let gateway = new gateway_1.Gateway(gatewayEUI, new URL(NETWORK_SERVER_URI));
     gateways.push(gateway);
 }
 // Initialize virtual nodes and start their simulation process
 for (let i = END_NODE_START_DEVADDR; i <= END_NODE_END_DEVADDR; i++) {
     let b = Buffer.allocUnsafe(4);
     b.writeUInt32BE(i);
-    let endNode = new end_node_1.EndNode(b, Buffer.from('4F58A13D1F44D307AFACD65A0A5DDF07', 'hex'), Buffer.from('4F58A13D1F44D307AFACD65A0A5DDF07', 'hex'));
+    let endNode = new end_node_1.EndNode(b, Buffer.from(NETWORK_SESSION_KEY, 'hex'), Buffer.from(APPLICATION_SESSION_KEY, 'hex'), { txPeriod: END_NODE_TX_PERIOD });
     endNode.on('packet', (packet) => {
         // randomly pick a few gateways (between 1 and 3) and have them send the uplink packet
         getNRandomGateways(gateways, random_1.default.int(1, 3)).forEach((g) => g.enqueueUplink(packet));
