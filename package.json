@@ -1,6 +1,6 @@
 {
   "name": "lorawan-node-simulator",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "",
   "main": "built/index.js",
   "dependencies": {
@@ -24,7 +24,7 @@
   "author": "Benjamin Cabé",
   "license": "MIT",
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/kartben/lorawan-node-simulator"
+    "type": "git",
+    "url": "https://github.com/kartben/lorawan-node-simulator"
   }
 }

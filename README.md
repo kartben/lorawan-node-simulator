@@ -23,8 +23,8 @@ The simulator needs to be configured using the following environment variables (
 - **`APP_SESSION_KEY`**:  The application session key (AppSKey) used by the simulated devices (ex: D8B3FEE5D99EFCFE924678DD664E160C) ;
 - `GATEWAY_START_EUI`: EUI of the first gateway to simulate, in decimal format (default: 1, i.e. 0x0000000000000000);
 - `GATEWAY_END_EUI`: EUI of the last (inclusive) gateway to simulate, in decimal format (default: 5, i.e. 0x0000000000000005);
-- `END_NODE_START_DEVADDR` = DevAddr of the first end node to simulate, in decimal format (default: 1, i.e. 0x00000000);
-- `END_NODE_END_DEVADDR` = DevAddr of the last (inclusive) end node to simulate , in decimal format (default: 1000, i.e. 0x000003e8).
+- `END_NODE_START_DEVADDR`: DevAddr of the first end node to simulate, in decimal format (default: 1, i.e. 0x00000000);
+- `END_NODE_END_DEVADDR`: DevAddr of the last (inclusive) end node to simulate , in decimal format (default: 1000, i.e. 0x000003e8).
 - `END_NODE_TX_PERIOD`: how often the end nodes transmit, in milliseconds (default: 30000, i.e. 30s) ;
 
 ### Docker container
@@ -40,7 +40,7 @@ docker run kartben/lorawan-node-simulator
 ## Pre-requisites / Limitations
 
 - The simulator does *not* provision the simulated gateways, end devices and applications in your network server so you must take care of doing so prior to launching a simulation
-- 
+
 - Gateways need to be provisioned with an "EU 863-870" frequency plan. Note that adding support for additional frequency plans in the simulator is reasonably straigthforward ;
 
 - Devices need to be provisioned in your network server using the ABP method, and need to be in a "vanilla" state (i.e. frame counter = 0) ;
@@ -50,7 +50,6 @@ docker run kartben/lorawan-node-simulator
 - All simulated devices need to have the same NwkSKey and AppSKey (which may not be a recommened practice in a real-world environment) ;
 
 - No downlink support (the packet forwarder of the simulated gateways only supports "PUSH_DATA" command from the Semtech packet forwarder spec.) ;
-
 
 ## Author
 
