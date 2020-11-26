@@ -41,8 +41,6 @@ The simulator is also available as a Docker container.
 docker run kartben/lorawan-node-simulator
 ```
 
-
-
 ## Pre-requisites / Limitations
 
 - The simulator does *not* provision the simulated gateways, end devices and applications in your network server so you must take care of doing so prior to launching a simulation
@@ -70,7 +68,7 @@ docker run kartben/lorawan-node-simulator
 
 Contributions, issues and feature requests are welcome!
 
-Feel free to check [issues page](https://github.com/kartben/wioterminal-azureiothub-sample/issues).
+Feel free to check [issues page](https://github.com/kartben/lorawan-node-simulator/issues).
 
 ## Show your support
 
