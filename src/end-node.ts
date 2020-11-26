@@ -3,7 +3,6 @@ import lora_packet from 'lora-packet'
 import LoraPacket from "lora-packet/out/lib/LoraPacket"
 import random from 'random';
 
-
 type DevAddr = Buffer
 type NwkKey = Buffer
 type AppKey = Buffer

@@ -15,7 +15,6 @@ const ALLOWED_DATARATES = EU_868_DATARATES
 
 type RandomGenFunction = () => number;
 
-
 class Gateway {
     gatewayEUI: GatewayEUI
     networkServer: URL
