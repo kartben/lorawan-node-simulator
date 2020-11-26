@@ -31,7 +31,7 @@ Once all the required environment variables have been set (defined globally in y
 
 ```bash
 lorawan-node-simulator
-``
+```
 
 ### Docker container
 
