@@ -27,6 +27,12 @@ The simulator needs to be configured using the following environment variables (
 - `END_NODE_END_DEVADDR`: DevAddr of the last (inclusive) end node to simulate , in decimal format (default: 1000, i.e. 0x000003e8).
 - `END_NODE_TX_PERIOD`: how often the end nodes transmit, in milliseconds (default: 30000, i.e. 30s) ;
 
+Once all the required environment variables have been set (defined globally in your environment, or in a .env file in the folder from where you'll run the command), simply launch the simulation:
+
+```bash
+lorawan-node-simulator
+``
+
 ### Docker container
 
 The simulator is also available as a Docker container.
