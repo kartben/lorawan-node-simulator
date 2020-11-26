@@ -3,6 +3,9 @@
   "version": "0.1.1",
   "description": "",
   "main": "built/index.js",
+  "bin": {
+    "lorawan-node-simulator": "./built/index.js"
+  },
   "dependencies": {
     "dotenv": "^8.2.0",
     "lora-packet": "^0.8.2",

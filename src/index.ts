@@ -1,4 +1,4 @@
-import { randomInt } from 'crypto';
+#!/usr/bin/env node
 import dotenv from 'dotenv';
 import { exit } from 'process';
 dotenv.config();
@@ -6,7 +6,6 @@ dotenv.config();
 import random from 'random';
 
 import { EndNode } from './end-node';
-import { EndNodeOtaa } from './end-node-otaa';
 import { Gateway } from './gateway';
 
 const NETWORK_SERVER_URI = process.env.NETWORK_SERVER_URI
