@@ -22,7 +22,7 @@ The simulator needs to be configured using the following environment variables (
 
 - **`NETWORK_SERVER_URI`**: (ex: udp://ttnv3-myinstance.eastus.cloudapp.azure.com:1700) ;
 - **`NETWORK_SESSION_KEY`**:  The network session key (NwkSKey) used by the simulated devices (ex: A54FA689EED2DCE45A4CE5CD947EFCB7) ;
-- **`APP_SESSION_KEY`**:  The application session key (AppSKey) used by the simulated devices (ex: D8B3FEE5D99EFCFE924678DD664E160C) ;
+- **`APPLICATION_SESSION_KEY`**:  The application session key (AppSKey) used by the simulated devices (ex: D8B3FEE5D99EFCFE924678DD664E160C) ;
 - `GATEWAY_START_EUI`: EUI of the first gateway to simulate, in decimal format (default: 1, i.e. 0x0000000000000000);
 - `GATEWAY_END_EUI`: EUI of the last (inclusive) gateway to simulate, in decimal format (default: 5, i.e. 0x0000000000000005);
 - `END_NODE_START_DEVADDR`: DevAddr of the first end node to simulate, in decimal format (default: 1, i.e. 0x00000000);
