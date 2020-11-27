@@ -4,7 +4,9 @@
 [![Twitter: kartben](https://img.shields.io/twitter/follow/kartben.svg?style=social)](https://twitter.com/kartben)
 [![Build](https://github.com/kartben/lorawan-node-simulator/workflows/Node.js%20CI/badge.svg)](https://github.com/kartben/lorawan-node-simulator/actions?query=workflow%3ANode.js+CI)
 
-This repository contains a simulation infrastructure for LoRaWAN end nodes. It simulates LoRaWAN gateways, and endpoints that regularly emit LoRaWAN radio packets ("Unconfirmed Data Uplink"). These packets get picked up by a few (i.e. 1 to 3) gateways that forward said packets to a network server
+This repository contains a simulation infrastructure for LoRaWAN.
+
+ It simulates LoRaWAN gateways, and endpoints regularly emitting LoRaWAN radio packets ("Unconfirmed Data Uplink" by default). These packets get picked up by a few (i.e. 1 to 3) gateways that forward them to a network server.
 
 As the initial purpose of this solution was to stress test a LoRaWAN network server, and not necessarily implement a full-blown simulator, only uplink traffic is generated at this point, and devices are expected to be provisioned via ABP.
 
