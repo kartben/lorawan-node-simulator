@@ -45,17 +45,19 @@ docker run kartben/lorawan-node-simulator
 
 ## Pre-requisites / Limitations
 
-- The simulator does *not* provision the simulated gateways, end devices and applications in your network server so you must take care of doing so prior to launching a simulation
+- The simulator does *not* provision the simulated gateways, end devices and applications in your network server so you must take care of doing so prior to launching a simulation ;
+
+- The application payload is hard-coded and the same for all devices (4 bytes: ['t', 'e', 's', 't']) ;
 
 - Gateways need to be provisioned with an "EU 863-870" frequency plan. Note that adding support for additional frequency plans in the simulator is reasonably straigthforward ;
 
 - Devices need to be provisioned in your network server using the ABP method, and need to be in a "vanilla" state (i.e. frame counter = 0) ;
 
-- Devices only emit unconfirmed uplink ;
+- Devices only emit unconfirmed uplink at the moment ;
 
-- All simulated devices need to have the same NwkSKey and AppSKey (which may not be a recommened practice in a real-world environment) ;
+- All simulated devices need to have the same NwkSKey and AppSKey (which may not be a recommened practice in a real-world environment!) ;
 
-- No downlink support (the packet forwarder of the simulated gateways only supports "PUSH_DATA" command from the Semtech packet forwarder spec.) ;
+- No downlink support (the packet forwarder that the simulated gateways implement only supports "PUSH_DATA" command from the Semtech packet forwarder specification at the moment, so downlink can't be available) ;
 
 ## Author
 
