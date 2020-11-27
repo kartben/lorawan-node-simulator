@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "dotenv": "^8.2.0",
-    "lora-packet": "^0.8.2",
+    "lora-packet": "^0.8.3",
     "packet-forwarder": "^1.0.8",
     "packet-forwarder-json-builder": "^2.0.6",
     "random": "^2.2.0"
