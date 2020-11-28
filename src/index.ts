@@ -65,7 +65,7 @@ for (let i = devStart; i <= devEnd; i++) {
     let endNode = new EndNode(b, Buffer.from(NETWORK_SESSION_KEY, 'hex'), Buffer.from(APPLICATION_SESSION_KEY, 'hex'), { txPeriod: END_NODE_TX_PERIOD })
     endNode.on('packet', (packet) => {
         // randomly pick a few gateways (between 1 and 3) and have them send the uplink packet
-        getNRandomGateways(gateways, random.int(1, 1)).forEach((g) => g.enqueueUplink(packet))
+        getNRandomGateways(gateways, random.int(1, 3)).forEach((g) => g.enqueueUplink(packet))
     })
 
     endNode.start()
