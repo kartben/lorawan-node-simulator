@@ -17,10 +17,10 @@ if (NETWORK_SERVER_URI === undefined || NETWORK_SESSION_KEY === undefined || APP
     console.log('ERROR: Make sure to set the NETWORK_SERVER_URI, NETWORK_SESSION_KEY, APPLICATION_SESSION_KEY prior to launching the simulation.');
     process_1.exit(1);
 }
-const GATEWAY_START_EUI = parseInt(process.env.GATEWAY_START_EUI || '1');
-const GATEWAY_END_EUI = parseInt(process.env.GATEWAY_END_EUI || '5');
-const END_NODE_START_DEVADDR = parseInt(process.env.END_NODE_START_DEVADDR || '1');
-const END_NODE_END_DEVADDR = parseInt(process.env.END_NODE_END_DEVADDR || '1000');
+const GATEWAY_START_EUI = process.env.GATEWAY_START_EUI || '00000000000000000000000000000001';
+const GATEWAY_END_EUI = process.env.GATEWAY_END_EUI || '00000000000000000000000000000005';
+const END_NODE_START_DEVADDR = process.env.END_NODE_START_DEVADDR || '00000001';
+const END_NODE_END_DEVADDR = process.env.END_NODE_END_DEVADDR || '000003e8';
 const END_NODE_TX_PERIOD = parseInt(process.env.END_NODE_TX_PERIOD || '30000');
 /**
  * Returns `n` elements randomly picked from `arr`
@@ -40,20 +40,24 @@ function getNRandomGateways(arr, n) {
 }
 // Initialize virtual gateways
 let gateways = [];
-for (let i = GATEWAY_START_EUI; i <= GATEWAY_END_EUI; i++) {
+let gwStart = BigInt('0x' + GATEWAY_START_EUI);
+let gwEnd = BigInt('0x' + GATEWAY_END_EUI);
+for (let i = gwStart; i <= gwEnd; i++) {
     let gatewayEUI = Buffer.allocUnsafe(8);
     gatewayEUI.writeBigInt64BE(BigInt(i));
     let gateway = new gateway_1.Gateway(gatewayEUI, new URL(NETWORK_SERVER_URI));
     gateways.push(gateway);
 }
 // Initialize virtual nodes and start their simulation process
-for (let i = END_NODE_START_DEVADDR; i <= END_NODE_END_DEVADDR; i++) {
+let devStart = parseInt(END_NODE_START_DEVADDR, 16);
+let devEnd = parseInt(END_NODE_END_DEVADDR, 16);
+for (let i = devStart; i <= devEnd; i++) {
     let b = Buffer.allocUnsafe(4);
     b.writeUInt32BE(i);
     let endNode = new end_node_1.EndNode(b, Buffer.from(NETWORK_SESSION_KEY, 'hex'), Buffer.from(APPLICATION_SESSION_KEY, 'hex'), { txPeriod: END_NODE_TX_PERIOD });
     endNode.on('packet', (packet) => {
         // randomly pick a few gateways (between 1 and 3) and have them send the uplink packet
-        getNRandomGateways(gateways, random_1.default.int(1, 3)).forEach((g) => g.enqueueUplink(packet));
+        getNRandomGateways(gateways, random_1.default.int(1, 1)).forEach((g) => g.enqueueUplink(packet));
     });
     endNode.start();
 }

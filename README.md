@@ -23,10 +23,10 @@ The simulator needs to be configured using the following environment variables (
 - **`NETWORK_SERVER_URI`**: (ex: udp://ttnv3-myinstance.eastus.cloudapp.azure.com:1700) ;
 - **`NETWORK_SESSION_KEY`**:  The network session key (NwkSKey) used by the simulated devices (ex: A54FA689EED2DCE45A4CE5CD947EFCB7) ;
 - **`APPLICATION_SESSION_KEY`**:  The application session key (AppSKey) used by the simulated devices (ex: D8B3FEE5D99EFCFE924678DD664E160C) ;
-- `GATEWAY_START_EUI`: EUI of the first gateway to simulate, in decimal format (default: 1, i.e. 0x0000000000000000);
-- `GATEWAY_END_EUI`: EUI of the last (inclusive) gateway to simulate, in decimal format (default: 5, i.e. 0x0000000000000005);
-- `END_NODE_START_DEVADDR`: DevAddr of the first end node to simulate, in decimal format (default: 1, i.e. 0x00000000);
-- `END_NODE_END_DEVADDR`: DevAddr of the last (inclusive) end node to simulate , in decimal format (default: 1000, i.e. 0x000003e8).
+- `GATEWAY_START_EUI`: EUI of the first gateway to simulate, 32 hex digits (default: 0000000000000001);
+- `GATEWAY_END_EUI`: EUI of the last (inclusive) gateway to simulate, 32 hex digits (default: 0000000000000005);
+- `END_NODE_START_DEVADDR`: DevAddr of the first end node to simulate, 8 hex digits (default: 00000000);
+- `END_NODE_END_DEVADDR`: DevAddr of the last (inclusive) end node to simulate, 8 hex digits (default simulation has 1000 devices, hence end address is 000003e8).
 - `END_NODE_TX_PERIOD`: how often the end nodes transmit, in milliseconds (default: 30000, i.e. 30s) ;
 
 Once all the required environment variables have been set (defined globally in your environment, or in a .env file in the folder from where you'll run the command), simply launch the simulation:
