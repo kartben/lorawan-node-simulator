@@ -1,4 +1,6 @@
 import { EventEmitter } from "events"
+import TypedEmitter from "typed-emitter"
+
 import lora_packet from 'lora-packet'
 import LoraPacket from "lora-packet/out/lib/LoraPacket"
 import random from 'random';
@@ -11,7 +13,11 @@ interface EndNodeOptions {
     txPeriod: number;
 }
 
-class EndNode extends EventEmitter {
+interface EndNodeEvents {
+    packet: (packet: LoraPacket) => void
+  }
+
+class EndNode extends (EventEmitter as new () => TypedEmitter<EndNodeEvents>) {
     devAddr: DevAddr
 
     private _nwkKey: NwkKey
