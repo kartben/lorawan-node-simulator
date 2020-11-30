@@ -51,7 +51,7 @@ class Gateway {
                             codr: '4/5',
                             rssi: Math.round(this._rssiRandomGenerator()),
                             lsnr: Math.round(this._lsnrRandomGenerator() * 10) / 10.,
-                            size: data.length,
+                            size: phyPayload.length,
                             data: data
                         }]
                 };
