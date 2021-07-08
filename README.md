@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](/LICENSE)
 [![Twitter: kartben](https://img.shields.io/twitter/follow/kartben.svg?style=social)](https://twitter.com/kartben)
-[![Build](https://github.com/kartben/lorawan-node-simulator/workflows/Node.js%20CI/badge.svg)](https://github.com/kartben/lorawan-node-simulator/actions?query=workflow%3ANode.js+CI)
+[![Build](https://github.com/kartben/lorawan-node-simulator/workflows/Node.js%20CI/badge.svg)](https://github.com/kartben/lorawan-node-simulator/actions?query=workflow%3A"Node.js+CI")
 
 This repository contains a simulation infrastructure for LoRaWAN.
 
