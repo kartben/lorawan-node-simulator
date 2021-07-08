@@ -49,7 +49,7 @@ let gwStart = BigInt('0x' + GATEWAY_START_EUI)
 let gwEnd = BigInt('0x' + GATEWAY_END_EUI)
 for (let i = gwStart; i <= gwEnd; i++) {
     let gatewayEUI = Buffer.allocUnsafe(8)
-    gatewayEUI.writeBigInt64BE(BigInt(i))
+    gatewayEUI.writeBigUInt64BE(BigInt(i))
 
     let gateway = new Gateway(gatewayEUI, new URL(NETWORK_SERVER_URI))
     gateways.push(gateway)
