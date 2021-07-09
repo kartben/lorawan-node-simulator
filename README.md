@@ -26,10 +26,10 @@ The simulator needs to be configured using the following environment variables (
 - `GATEWAY_START_EUI`: EUI of the first gateway to simulate, 32 hex digits (default: 0000000000000001);
 - `GATEWAY_END_EUI`: EUI of the last (inclusive) gateway to simulate, 32 hex digits (default: 0000000000000005);
 - `END_NODE_START_DEVADDR`: DevAddr of the first end node to simulate, 8 hex digits (default: 00000000);
-- `END_NODE_END_DEVADDR`: DevAddr of the last (inclusive) end node to simulate, 8 hex digits (default simulation has 1000 devices, hence end address is 000003e8).
+- `END_NODE_END_DEVADDR`: DevAddr of the last (inclusive) end node to simulate, 8 hex digits (default simulation has 1000 devices, hence end address is 000003E8).
 - `END_NODE_TX_PERIOD`: how often the end nodes transmit, in milliseconds (default: 30000, i.e. 30s) ;
 
-Once all the required environment variables have been set (defined globally in your environment, or in a .env file in the folder from where you'll run the command), simply launch the simulation:
+Once all the required environment variables have been set (defined globally in your environment, or in a `.env` file in the folder from where you'll run the command, in which case you may want to rename the `.env.sample` file and use it as a starting point), simply launch the simulation:
 
 ```bash
 lorawan-node-simulator
